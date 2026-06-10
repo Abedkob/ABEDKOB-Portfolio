@@ -146,8 +146,10 @@ export function BootScreen() {
       </motion.div>
 
       <button
+        type="button"
         onClick={enterPortfolio}
-        className="hud-action glass-card absolute bottom-8 right-6 rounded-lg px-4 py-2.5 text-xs font-mono tracking-[0.18em] text-primary/80 transition-colors hover:bg-primary/10"
+        aria-label="Skip intro and open portfolio menu"
+        className="hud-action glass-card absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 inline-flex min-h-11 -translate-x-1/2 items-center justify-center rounded-full border-primary/25 px-4 py-2 text-[11px] font-mono tracking-[0.12em] text-primary/85 transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary sm:bottom-auto sm:left-auto sm:right-8 sm:top-8 sm:translate-x-0"
       >
         SKIP INTRO
       </button>
