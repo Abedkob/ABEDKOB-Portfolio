@@ -58,7 +58,7 @@ export function BootScreen() {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-transparent z-50">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-transparent px-4 text-center">
       <div className="absolute inset-0 aurora-field opacity-70" />
       <div className="absolute inset-0 star-grid opacity-45" />
       {/* Scanline effect */}
@@ -68,7 +68,7 @@ export function BootScreen() {
 
       {/* Logo phase */}
       <motion.div
-        className="flex flex-col items-center gap-6 transition-all duration-700"
+        className="flex w-full max-w-3xl flex-col items-center gap-6 transition-all duration-700"
         initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
         transition={{ type: "spring", stiffness: 170, damping: 24 }}
@@ -77,23 +77,23 @@ export function BootScreen() {
         {/* Studio Logo */}
         <div className="relative">
           <h1
-            className="text-4xl sm:text-5xl md:text-7xl font-sans font-bold tracking-[0.18em] sm:tracking-[0.3em] text-primary glitch-text neon-glow"
+            className="glitch-text neon-glow text-[clamp(2.25rem,13vw,4.5rem)] font-sans font-bold tracking-[0.1em] text-primary sm:text-5xl sm:tracking-[0.24em] md:text-7xl md:tracking-[0.3em]"
             data-text="ABEDKOB"
           >
             ABEDKOB
           </h1>
-          <div className="flex items-center justify-center gap-3 mt-3">
+          <div className="mt-3 flex w-full items-center justify-center gap-2 sm:gap-3">
             <div className="h-px flex-1 bg-primary/50" />
-            <span className="text-sm md:text-base font-mono tracking-[0.35em] sm:tracking-[0.5em] text-primary/70">STUDIOS</span>
+            <span className="font-mono text-xs tracking-[0.28em] text-primary/70 sm:text-sm sm:tracking-[0.42em] md:text-base md:tracking-[0.5em]">STUDIOS</span>
             <div className="h-px flex-1 bg-primary/50" />
           </div>
         </div>
 
         {/* Loading bar */}
         {phase === "loading" && (
-          <div className="mt-12 w-72 md:w-96">
+          <div className="mt-8 w-full max-w-xs sm:mt-12 md:max-w-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-mono text-muted-foreground">INITIALIZING SYSTEMS</span>
+              <span className="text-xs font-mono text-muted-foreground sm:text-sm">INITIALIZING SYSTEMS</span>
               <span className="text-sm font-mono text-primary">{Math.min(100, Math.floor(progress))}%</span>
             </div>
             <div className="h-1.5 bg-secondary/70 rounded-full overflow-hidden">
@@ -133,10 +133,10 @@ export function BootScreen() {
 
         {/* Press any key */}
         {showPress && (
-          <div className="mt-16 flex flex-col items-center gap-4 animate-in fade-in duration-700">
+          <div className="mt-10 flex w-full flex-col items-center gap-3 animate-in fade-in duration-700 sm:mt-16 sm:gap-4">
             <span
-              className="hud-action rounded-sm border border-primary/20 text-sm sm:text-base font-mono tracking-[0.2em] sm:tracking-[0.3em] text-primary"
-              style={{ animation: "pulse-glow 2s ease-in-out infinite", padding: "8px 24px" }}
+              className="hud-action flex min-h-11 w-full max-w-[18rem] items-center justify-center rounded-full border border-primary/20 px-4 py-2 text-xs font-mono tracking-[0.14em] text-primary sm:max-w-none sm:px-6 sm:text-base sm:tracking-[0.3em]"
+              style={{ animation: "pulse-glow 2s ease-in-out infinite" }}
             >
               PRESS ANY KEY TO START
             </span>
@@ -149,9 +149,10 @@ export function BootScreen() {
         type="button"
         onClick={enterPortfolio}
         aria-label="Skip intro and open portfolio menu"
-        className="hud-action glass-card absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 inline-flex min-h-11 -translate-x-1/2 items-center justify-center rounded-full border-primary/25 px-4 py-2 text-[11px] font-mono tracking-[0.12em] text-primary/85 transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary sm:bottom-auto sm:left-auto sm:right-8 sm:top-8 sm:translate-x-0"
+        className="hud-action glass-card absolute right-4 top-4 z-20 inline-flex min-h-10 items-center justify-center rounded-full border-primary/25 px-3 py-2 text-[10px] font-mono tracking-[0.1em] text-primary/85 transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary sm:right-8 sm:top-8 sm:min-h-11 sm:px-4 sm:text-[11px] sm:tracking-[0.12em]"
       >
-        SKIP INTRO
+        <span className="sm:hidden">SKIP</span>
+        <span className="hidden sm:inline">SKIP INTRO</span>
       </button>
 
       {/* Corner decorations */}
