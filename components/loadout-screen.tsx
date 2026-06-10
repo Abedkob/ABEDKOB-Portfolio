@@ -1,20 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import type { CSSProperties } from "react"
 import { HudNav } from "@/components/hud-nav"
 import { SKILL_TREE, type SkillCategory } from "@/lib/portfolio-data"
+import { itemVariants, listVariants, motion } from "@/components/motion-kit"
 
 const rarityColors: Record<string, string> = {
-  Legendary: "text-neon-orange border-neon-orange/40 bg-neon-orange/10",
-  Epic: "text-neon-pink border-neon-pink/40 bg-neon-pink/10",
-  Rare: "text-neon-cyan border-neon-cyan/40 bg-neon-cyan/10",
-  Common: "text-foreground/60 border-border bg-secondary",
+  Legendary: "text-neon-pink border-neon-pink/35 bg-neon-pink/10",
+  Epic: "text-neon-cyan border-neon-cyan/35 bg-neon-cyan/10",
+  Rare: "text-primary border-primary/25 bg-primary/10",
+  Common: "text-foreground/60 border-border bg-secondary/70",
 }
 
 const rarityGlow: Record<string, string> = {
-  Legendary: "0 0 10px oklch(0.78 0.17 60 / 0.3)",
-  Epic: "0 0 10px oklch(0.72 0.22 340 / 0.3)",
-  Rare: "0 0 10px oklch(0.82 0.19 195 / 0.3)",
+  Legendary: "0 0 12px var(--glow-accent)",
+  Epic: "0 0 12px var(--glow-primary-soft)",
+  Rare: "0 0 10px var(--glow-primary-soft)",
   Common: "none",
 }
 
@@ -29,59 +30,47 @@ function SkillNode({
   skill,
   branchColor,
 }: {
-  skill: { name: string; level: number; rarity: string }
+  skill: { name: string; level: number; rarity: string; evidence: string }
   branchColor: string
 }) {
-  const [hovered, setHovered] = useState(false)
-
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <motion.div
+      className="group relative"
+      variants={itemVariants}
     >
       <div
-        className={`relative px-4 py-3 rounded-sm border transition-all duration-300 cursor-default ${rarityColors[skill.rarity]}`}
-        style={{ boxShadow: hovered ? rarityGlow[skill.rarity] : "none" }}
+        className={`loadout-skill glass-card relative overflow-hidden rounded-xl px-4 py-3 transition-[box-shadow,border-color,background-color] duration-200 cursor-default ${rarityColors[skill.rarity]}`}
+        style={{ "--skill-hover-shadow": rarityGlow[skill.rarity] } as CSSProperties}
       >
-        <div className="flex items-center justify-between gap-4 mb-2">
-          <span className="text-sm font-sans font-bold tracking-wider">{skill.name}</span>
-          <span className="text-xs font-mono opacity-60">{skill.rarity.toUpperCase()}</span>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/45 to-transparent" />
+        <div className="flex items-start justify-between gap-4 mb-2">
+          <div>
+            <span className="text-sm font-sans font-bold tracking-wider">{skill.name}</span>
+            <p className="mt-1 text-xs font-serif leading-relaxed text-foreground/68">{skill.evidence}</p>
+          </div>
+          <span className="shrink-0 text-xs font-mono opacity-60">{skill.rarity.toUpperCase()}</span>
         </div>
 
         {/* Level bar */}
         <div className="h-1.5 bg-background/50 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700"
+          <motion.div
+            className="h-full origin-left rounded-full"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: skill.level / 100 }}
+            transition={{ duration: 0.42, ease: "easeOut" }}
             style={{
-              width: `${skill.level}%`,
-              background: branchColorMap[SKILL_TREE.find(b => b.skills.some(s => s.name === skill.name))?.color || "neon-cyan"] || branchColor,
-              boxShadow: `0 0 6px ${branchColor}`,
+              width: "100%",
+              background: branchColor,
+              boxShadow: `0 0 5px ${branchColor}`,
             }}
           />
         </div>
-        <div className="flex items-center justify-between mt-1">
-          <span className="text-xs font-mono opacity-40">LVL</span>
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-xs font-mono opacity-40">CONFIDENCE</span>
           <span className="text-xs font-mono opacity-60">{skill.level}/100</span>
         </div>
       </div>
-
-      {/* Tooltip */}
-      {hovered && (
-        <div
-          className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-sm bg-background border border-primary/40 pointer-events-none"
-          style={{ boxShadow: "0 0 15px rgba(0,220,255,0.15)", minWidth: "180px" }}
-        >
-          <div className="text-xs font-mono text-primary mb-1">{skill.name}</div>
-          <div className="text-xs font-mono text-muted-foreground">
-            Proficiency: {skill.level}%
-          </div>
-          <div className={`text-xs font-mono mt-1 ${rarityColors[skill.rarity].split(" ")[0]}`}>
-            {skill.rarity} Tier
-          </div>
-        </div>
-      )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -89,7 +78,7 @@ function SkillBranch({ category }: { category: SkillCategory }) {
   const color = branchColorMap[category.color] || "var(--neon-cyan)"
 
   return (
-    <div className="hud-panel hud-corner p-5 rounded-sm">
+    <motion.div className="hud-panel hud-corner p-5 rounded-xl" variants={itemVariants}>
       {/* Branch header */}
       <div className="flex items-center gap-3 mb-4">
         <div
@@ -112,7 +101,7 @@ function SkillBranch({ category }: { category: SkillCategory }) {
           <SkillNode key={skill.name} skill={skill} branchColor={color} />
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -124,31 +113,39 @@ export function LoadoutScreen() {
   )
 
   return (
-    <div className="fixed inset-0 bg-background overflow-auto">
+    <div className="screen-scroll" style={{ "--screen-max": "72rem" } as CSSProperties}>
       <HudNav title="LOADOUT" subtitle="SKILL ARSENAL" />
 
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,_oklch(0.72_0.22_340_/_0.05),transparent_50%)]" />
+        <div className="absolute inset-0 aurora-field opacity-25" />
       </div>
 
-      <div className="relative z-10 pt-20 pb-16 px-4 md:px-8 lg:px-16 max-w-6xl mx-auto">
+      <div className="screen-content">
         {/* Header */}
         <div className="mb-8">
-          <div className="text-xs font-mono text-primary/60 mb-2">// SKILL TREE</div>
-          <h1 className="text-3xl md:text-4xl font-sans font-bold tracking-wider text-foreground">
-            ACTIVE <span className="text-accent neon-text-pink">LOADOUT</span>
+          <div className="hud-label text-primary/60 mb-2">// SKILL TREE</div>
+          <h1 className="screen-title font-sans font-bold text-foreground">
+            ACTIVE <span className="text-accent accent-glow">LOADOUT</span>
           </h1>
-          <p className="text-sm font-mono text-muted-foreground mt-2">
+          <p className="copy-measure mt-3 text-base font-serif leading-relaxed text-foreground/72">
+            Skills are grouped by domain and paired with project evidence, so the loadout reads like capability plus proof.
+          </p>
+          <p className="text-sm font-mono text-muted-foreground mt-3">
             {totalSkills} skills equipped // {legendary} legendary tier
           </p>
         </div>
 
         {/* Skill tree grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={listVariants}
+          initial="initial"
+          animate="animate"
+        >
           {SKILL_TREE.map((category) => (
             <SkillBranch key={category.branch} category={category} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

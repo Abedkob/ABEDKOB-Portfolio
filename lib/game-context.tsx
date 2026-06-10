@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 import type { MenuItemId } from "@/lib/portfolio-data"
 
 export type GameState = "boot" | "menu" | "missions" | "loadout" | "archives" | "ops" | "contact" | "settings"
@@ -29,7 +29,7 @@ const GameContext = createContext<GameContextType | null>(null)
 export function GameProvider({ children }: { children: ReactNode }) {
   const [gameState, setGameState] = useState<GameState>("boot")
   const [transitioning, setTransitioning] = useState(false)
-  const [bootComplete, setBootComplete] = useState(false)
+  const [bootComplete, setBootCompleteState] = useState(false)
   const [settings, setSettings] = useState<SettingsState>({
     bloom: true,
     particles: true,
@@ -39,6 +39,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const updateSettings = useCallback((partial: Partial<SettingsState>) => {
     setSettings((prev) => ({ ...prev, ...partial }))
+  }, [])
+
+  useEffect(() => {
+    if (window.sessionStorage.getItem("abedkob-boot-complete") === "true") {
+      setBootCompleteState(true)
+      setGameState("menu")
+    }
   }, [])
 
   const navigateTo = useCallback(
@@ -51,6 +58,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     },
     []
   )
+
+  const setBootComplete = useCallback((value: boolean) => {
+    setBootCompleteState(value)
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("abedkob-boot-complete", String(value))
+    }
+  }, [])
 
   return (
     <GameContext.Provider

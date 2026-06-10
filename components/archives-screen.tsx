@@ -1,30 +1,32 @@
 "use client"
+import type { CSSProperties } from "react"
 import Image from "next/image"
 import { HudNav } from "@/components/hud-nav"
 import { PLAYER, EDUCATION } from "@/lib/portfolio-data"
 import { MapPin, Mail, Github, GraduationCap, Code2, User } from "lucide-react"
+import { itemVariants, listVariants, motion, panelHover } from "@/components/motion-kit"
 
 export function ArchivesScreen() {
   return (
-    <div className="fixed inset-0 bg-background overflow-auto">
+    <div className="screen-scroll" style={{ "--screen-max": "56rem" } as CSSProperties}>
       <HudNav title="ARCHIVES" subtitle="DOSSIER & TRAINING" />
 
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,_oklch(0.78_0.2_145_/_0.05),transparent_50%)]" />
+        <div className="absolute inset-0 aurora-field opacity-35" />
       </div>
 
-      <div className="relative z-10 pt-20 pb-16 px-4 md:px-8 lg:px-16 max-w-4xl mx-auto">
+      <div className="screen-content">
         {/* Header */}
         <div className="mb-8">
-          <div className="text-xs font-mono text-primary/60 mb-2">// CLASSIFIED ARCHIVES</div>
-          <h1 className="text-3xl md:text-4xl font-sans font-bold tracking-wider text-foreground">
-            AGENT <span className="text-neon-green neon-text-green">DOSSIER</span>
+          <div className="hud-label text-primary/60 mb-2">// CLASSIFIED ARCHIVES</div>
+          <h1 className="screen-title font-sans font-bold text-foreground">
+            AGENT <span className="text-primary neon-glow">DOSSIER</span>
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={listVariants} initial="initial" animate="animate">
           {/* About card */}
-          <div className="hud-panel hud-corner p-6 md:col-span-2">
+          <motion.div className="hud-panel hud-corner rounded-xl p-6 md:col-span-2" variants={itemVariants} whileHover={panelHover}>
             <div className="flex items-center gap-3 mb-4">
               <User className="w-6 h-6 text-primary" />
               <h3 className="text-base font-sans font-bold tracking-wider text-primary">IDENTITY</h3>
@@ -32,14 +34,14 @@ export function ArchivesScreen() {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar area */}
               <div className="flex-shrink-0">
-                <div className="w-28 h-28 rounded-sm border-2 border-primary/30 flex items-center justify-center bg-primary/5">
-                <Image
-              src="/images/profile.jpg"
-              alt="Abed Al-Nabe Koubeissy"
-              width={48}
-              height={48}
-              className="w-full h-full object-cover"
-            />
+                <div className="w-28 h-28 overflow-hidden rounded-xl border-2 border-primary/30 bg-primary/5 shadow-[0_0_22px_var(--glow-primary-soft)]">
+                  <Image
+                    src="/images/profile.jpg"
+                    alt="Abed Al-Nabe Koubeissy"
+                    width={112}
+                    height={112}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
               <div className="flex-1">
@@ -62,7 +64,7 @@ export function ArchivesScreen() {
                       href={PLAYER.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-mono text-primary hover:underline"
+                      className="rounded-sm text-sm font-mono text-primary hover:underline"
                     >
                       {PLAYER.github}
                     </a>
@@ -70,13 +72,13 @@ export function ArchivesScreen() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Education card */}
-          <div className="hud-panel hud-corner p-6">
+          <motion.div className="hud-panel hud-corner rounded-xl p-6" variants={itemVariants} whileHover={panelHover}>
             <div className="flex items-center gap-3 mb-4">
-              <GraduationCap className="w-6 h-6 text-neon-green" />
-              <h3 className="text-base font-sans font-bold tracking-wider text-neon-green">TRAINING RECORD</h3>
+              <GraduationCap className="w-6 h-6 text-primary" />
+              <h3 className="text-base font-sans font-bold tracking-wider text-primary">TRAINING RECORD</h3>
             </div>
             <div className="flex flex-col gap-3">
               <div>
@@ -85,14 +87,14 @@ export function ArchivesScreen() {
               </div>
               <div className="h-px bg-primary/10" />
               <div>
-                <p className="text-xs font-mono text-primary/60">// SPECIALIZATION</p>
+                <p className="hud-label text-primary/60">// SPECIALIZATION</p>
                 <p className="text-sm font-serif text-foreground/70 mt-1">{EDUCATION.focus}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Tech Arsenal summary */}
-          <div className="hud-panel hud-corner p-6">
+          <motion.div className="hud-panel hud-corner rounded-xl p-6" variants={itemVariants} whileHover={panelHover}>
             <div className="flex items-center gap-3 mb-4">
               <Code2 className="w-6 h-6 text-neon-cyan" />
               <h3 className="text-base font-sans font-bold tracking-wider text-neon-cyan">PRIMARY ARSENAL</h3>
@@ -101,7 +103,7 @@ export function ArchivesScreen() {
               {PLAYER.stack.map((tech) => (
                 <span
                   key={tech}
-                  className="px-3 py-1.5 text-sm font-mono rounded-sm bg-primary/10 text-primary border border-primary/30"
+                  className="px-3 py-1.5 text-sm font-mono rounded-lg bg-primary/10 text-primary border border-primary/30"
                 >
                   {tech}
                 </span>
@@ -112,8 +114,8 @@ export function ArchivesScreen() {
                 Full arsenal available in LOADOUT section
               </p>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   )

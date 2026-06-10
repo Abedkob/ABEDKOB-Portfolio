@@ -10,6 +10,7 @@ import { ArchivesScreen } from "@/components/archives-screen"
 import { OpsScreen } from "@/components/ops-screen"
 import { ContactScreen } from "@/components/contact-screen"
 import { SettingsScreen } from "@/components/settings-screen"
+import { AnimatePresence, MotionConfig, motion, screenVariants, useReducedMotion } from "@/components/motion-kit"
 
 const HubWorld = dynamic(
   () => import("@/components/hub-world").then((mod) => mod.HubWorld),
@@ -28,24 +29,52 @@ const HubWorld = dynamic(
 
 export function GameShell() {
   const { gameState, transitioning, settings } = useGame()
+  const reduceMotion = useReducedMotion()
+
+  const activeScreen = (() => {
+    if (gameState === "boot") return <BootScreen />
+    if (gameState === "menu") return <MainMenu />
+    if (gameState === "missions") return <MissionsScreen />
+    if (gameState === "loadout") return <LoadoutScreen />
+    if (gameState === "archives") return <ArchivesScreen />
+    if (gameState === "ops") return <OpsScreen />
+    if (gameState === "contact") return <ContactScreen />
+    if (gameState === "settings") return <SettingsScreen />
+    return <MainMenu />
+  })()
 
   return (
-    <div className={`relative w-screen h-screen ${settings.scanlines ? "scanlines" : ""}`}>
+    <div className={`relative h-dvh w-full overflow-hidden space-atmosphere ${settings.scanlines ? "scanlines" : ""}`}>
+      <div className="aurora-field fixed inset-0 pointer-events-none z-0 opacity-80" />
+      <div className="star-grid fixed inset-0 pointer-events-none z-0 opacity-55" />
+
       {/* Transition overlay */}
       <div
         className="fixed inset-0 bg-background z-[100] pointer-events-none transition-opacity duration-400"
-        style={{ opacity: transitioning ? 1 : 0 }}
+        style={{ opacity: transitioning ? 0.28 : 0 }}
       />
 
       {/* Game screens */}
-      {gameState === "boot" && <BootScreen />}
-      {gameState === "menu" && <MainMenu />}
-      {gameState === "missions" && <MissionsScreen />}
-      {gameState === "loadout" && <LoadoutScreen />}
-      {gameState === "archives" && <ArchivesScreen />}
-      {gameState === "ops" && <OpsScreen />}
-      {gameState === "contact" && <ContactScreen />}
-      {gameState === "settings" && <SettingsScreen />}
+      <MotionConfig reducedMotion="user">
+        <AnimatePresence mode="wait" initial={false}>
+          {reduceMotion ? (
+            <div key={gameState} className="relative z-10 h-full w-full">
+              {activeScreen}
+            </div>
+          ) : (
+            <motion.div
+              key={gameState}
+              className="relative z-10 h-full w-full"
+              variants={screenVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              {activeScreen}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </MotionConfig>
 
       {/* Film grain overlay (subtle) */}
       {settings.bloom && (
@@ -59,10 +88,7 @@ export function GameShell() {
 
       {/* Vignette */}
       <div
-        className="fixed inset-0 pointer-events-none z-[97]"
-        style={{
-          background: "radial-gradient(ellipse at center, transparent 50%, oklch(0.08 0.01 260 / 0.6) 100%)",
-        }}
+        className="space-vignette fixed inset-0 pointer-events-none z-[97]"
       />
     </div>
   )
