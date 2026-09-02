@@ -4,12 +4,7 @@
 
 Built with **Next.js 16**, **React 18**, **TypeScript**, **Tailwind CSS**, and modern UI components.
 
----
 
-## 🌐 Live Website
-
-👉 https://your-domain.vercel.app  
-(Replace with your real Vercel URL)
 
 ---
 
